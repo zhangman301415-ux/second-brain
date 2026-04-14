@@ -40,7 +40,7 @@ TODAY=$(date +%Y-%m-%d)
 # 1. 创建目录结构
 # ============================================================
 echo ""
-echo "1/5 创建目录结构..."
+echo "1/4 创建目录结构..."
 mkdir -p "$VAULT/00-Identity/capabilities"
 mkdir -p "$VAULT/00-Identity/narrative"
 mkdir -p "$VAULT/00-Identity/preferences"
@@ -61,54 +61,9 @@ echo "  ✓ 03-Episodic/    04-Working/    05-Creation/"
 echo "  ✓ 06-Archive/ingest/{queue,context}/"
 
 # ============================================================
-# 2. 生成 AGENTS.md
+# 2. 挂载 Claude Code hooks
 # ============================================================
-echo "2/5 生成 AGENTS.md..."
-if [ ! -f "$VAULT/AGENTS.md" ]; then
-  cat > "$VAULT/AGENTS.md" << 'AGENTS_EOF'
-# Agent 行为规范
-
-> 本 vault 使用 `refine-knowledge` 和 `context-loader` 两个 skill 管理知识的萃取与加载。
-
-## 一、认知架构
-
-| 层级 | 核心问题 | 对应目录 |
-| --- | ------- | ---------------- |
-| L5 | 我是谁？ | `00-Identity/` |
-| L4 | 我怎么做？ | `01-Procedural/` |
-| L3 | 我知道什么？ | `02-Semantic/` |
-| L2 | 发生过什么？ | `03-Episodic/` |
-| L1 | 当前在做什么？ | `04-Working/` |
-
-输出层 `05-Creation/` 和归档 `06-Archive/` 不属于认知层。
-
-详见 `refine-knowledge` 和 `context-loader` skill 的 SKILL.md。
-
-## 二、Agent 操作边界
-
-- L5 Identity: 更新必须询问用户
-- L4 Procedural: 修改已有内容需询问用户，新建无需询问
-- L3 Semantic: 自由读写
-- L2 Episodic: 自由写入
-- L1 Working: 自由读写
-
-## 三、命名规则
-
-文件夹名是**内容主题名**（`LangChain/`），不是**形式名/活动名**（`langchain学习/`）。
-
-## 四、文件流转
-
-文件跟着归属走，不跟着使用场景走。
-AGENTS_EOF
-  echo "  ✓ AGENTS.md"
-else
-  echo "  - AGENTS.md 已存在，跳过"
-fi
-
-# ============================================================
-# 3. 挂载 Claude Code hooks
-# ============================================================
-echo "3/5 挂载 Claude Code hooks..."
+echo "2/4 挂载 Claude Code hooks..."
 
 HOOKS_DIR="$HOME/.claude/hooks"
 mkdir -p "$HOOKS_DIR"
@@ -173,7 +128,7 @@ print('  ✓ hooks 已配置到 settings.json')
 # ============================================================
 # 4. 生成各层索引文件
 # ============================================================
-echo "4/5 生成索引文件..."
+echo "3/4 生成索引文件..."
 
 
 if [ ! -f "$VAULT/03-Episodic/index.md" ]; then
@@ -282,7 +237,7 @@ fi
 # ============================================================
 # 5. 生成 Identity 模板文件
 # ============================================================
-echo "5/5 生成 Identity 模板..."
+echo "4/4 生成 Identity 模板..."
 
 
 # Identity files use create_if_missing since content is static
