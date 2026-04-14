@@ -9,7 +9,7 @@ Agent 启动时自动加载相关上下文，不依赖外部 hook。
 
 ## 触发时机
 
-新会话开始时，Agent 主动执行。可通过 `manifest.md` 配置路径。
+新会话开始时，Agent 主动执行。
 
 ## Vault 结构
 
@@ -19,7 +19,6 @@ Agent 启动时自动加载相关上下文，不依赖外部 hook。
 02-Semantic/Areas/            ← 结构化知识
 01-Procedural/index.md        ← 方法论索引
 06-Archive/ingest/context/
-└── manifest.md               ← 结构定义（skill init 创建）
 ```
 
 ## 加载策略
