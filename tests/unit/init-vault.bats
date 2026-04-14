@@ -10,19 +10,27 @@ teardown() {
   rm -rf "$TEST_TMP"
 }
 
+# Helper to run init-vault with default paths
+_run_init() {
+  TEST_VAULT="$TEST_TMP/vault"
+  CONFIG_FILE="${1:-$TEST_TMP/config.json}"
+  run bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_VAULT" "$CONFIG_FILE"
+}
+
 @test "init-vault: exit 1 with no args" {
   run bash "$SCRIPTS_DIR/init-vault.sh"
   [ "$status" -eq 1 ]
+  [[ "$output" == *"请提供 vault 路径"* ]]
 }
 
 @test "init-vault: exit 1 with relative path" {
   run bash "$SCRIPTS_DIR/init-vault.sh" "relative/path"
   [ "$status" -eq 1 ]
+  [[ "$output" == *"必须是绝对路径"* ]]
 }
 
 @test "init-vault: creates all directory structure" {
-  TEST_VAULT="$TEST_TMP/vault"
-  run bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_VAULT"
+  _run_init
   [ "$status" -eq 0 ]
   [ -d "$TEST_VAULT/00-Identity/capabilities" ]
   [ -d "$TEST_VAULT/00-Identity/narrative" ]
@@ -40,8 +48,7 @@ teardown() {
 }
 
 @test "init-vault: generates all template files on first run" {
-  TEST_VAULT="$TEST_TMP/vault"
-  run bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_VAULT"
+  _run_init
   [ "$status" -eq 0 ]
   [ -f "$TEST_VAULT/00-Identity/profile.md" ]
   [ -f "$TEST_VAULT/00-Identity/values/core-values.md" ]
@@ -53,8 +60,7 @@ teardown() {
 }
 
 @test "init-vault: generates all index files" {
-  TEST_VAULT="$TEST_TMP/vault"
-  run bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_VAULT"
+  _run_init
   [ "$status" -eq 0 ]
   [ -f "$TEST_VAULT/03-Episodic/index.md" ]
   [ -f "$TEST_VAULT/01-Procedural/index.md" ]
@@ -79,21 +85,19 @@ teardown() {
   TEST_VAULT="$TEST_TMP/vault"
   CONFIG_FILE="$TEST_TMP/config.json"
   bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_VAULT" "$CONFIG_FILE"
-  MTIME_1=$(stat -f "%m" "$TEST_VAULT/00-Identity/profile.md")
-  sleep 1
+  CONTENT_BEFORE=$(cat "$TEST_VAULT/00-Identity/profile.md")
   run bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_VAULT" "$CONFIG_FILE"
   [ "$status" -eq 0 ]
-  MTIME_2=$(stat -f "%m" "$TEST_VAULT/00-Identity/profile.md")
-  [ "$MTIME_1" -eq "$MTIME_2" ]
+  CONTENT_AFTER=$(cat "$TEST_VAULT/00-Identity/profile.md")
+  [ "$CONTENT_BEFORE" = "$CONTENT_AFTER" ]
 }
 
 @test "init-vault: config written to vault-config.json" {
-  TEST_VAULT="$TEST_TMP/vault"
-  CONFIG_FILE="$TEST_TMP/config.json"
-  bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_VAULT" "$CONFIG_FILE"
-  VAULT_PATH=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE'))['vaultPath'])")
+  _run_init
+  [ "$status" -eq 0 ]
+  VAULT_PATH=$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["vaultPath"])' "$CONFIG_FILE")
   [ "$VAULT_PATH" = "$TEST_VAULT" ]
-  INITIALIZED=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE'))['initialized'])")
+  INITIALIZED=$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["initialized"])' "$CONFIG_FILE")
   [ "$INITIALIZED" = "True" ]
 }
 
@@ -107,9 +111,7 @@ teardown() {
 }
 
 @test "init-vault: exit 2 when mkdir fails" {
-  TEST_VAULT="$TEST_TMP/vault"
   # Create a file where a directory needs to be, so mkdir will fail
-  mkdir -p "$TEST_TMP"
   touch "$TEST_TMP/vault"
   run bash "$SCRIPTS_DIR/init-vault.sh" "$TEST_TMP/vault"
   [ "$status" -eq 2 ]
