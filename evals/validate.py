@@ -13,6 +13,17 @@ from collections import Counter
 
 EVALS_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# 维度到输出文件名的映射，与 generate.py 保持一致
+OUTPUT_FILES = {
+    "功能正确性": "functionality.jsonl",
+    "鲁棒性": "robustness.jsonl",
+    "指令清晰度": "clarity.jsonl",
+    "隔离性": "isolation.jsonl",
+    "幂等性": "idempotency.jsonl",
+    "性能开销": "performance.jsonl",
+    "知识完整性": "knowledge-integrity.jsonl",
+}
+
 REQUIRED_TAGS = {
     "功能正确性": ["basic", "edge"],
     "鲁棒性": ["missing", "corrupt", "empty"],
@@ -24,35 +35,45 @@ REQUIRED_TAGS = {
 }
 
 
-def check_duplicates(filepath: str) -> list[str]:
-    """检查 prompt+setup 组合是否重复。"""
-    errors = []
-    seen = {}
+def _read_jsonl(filepath: str) -> list[dict]:
+    """读取 JSONL 文件，跳过损坏行。返回 (cases, parse_errors)。"""
+    cases = []
+    parse_errors = []
     with open(filepath) as f:
-        for line in f:
+        for line_num, line in enumerate(f, 1):
             line = line.strip()
             if not line:
                 continue
-            case = json.loads(line)
-            key = (case.get("prompt", ""), json.dumps(case.get("setup", {}), sort_keys=True))
-            if key in seen:
-                errors.append(f"重复用例: {case['id']} 与 {seen[key]}")
-            seen[key] = case["id"]
+            try:
+                cases.append(json.loads(line))
+            except json.JSONDecodeError as e:
+                parse_errors.append(f"行 {line_num}: JSON 解析错误: {e}")
+    return cases, parse_errors
+
+
+def check_duplicates(filepath: str) -> list[str]:
+    """检查 prompt+setup 组合是否重复。"""
+    errors = []
+    cases, parse_errors = _read_jsonl(filepath)
+    errors.extend(parse_errors)
+    seen = {}
+    for case in cases:
+        key = (case.get("prompt", ""), json.dumps(case.get("setup", {}), sort_keys=True))
+        if key in seen:
+            errors.append(f"重复用例: {case['id']} 与 {seen[key]}")
+        seen[key] = case["id"]
     return errors
 
 
 def check_coverage(filepath: str, dimension: str) -> list[str]:
     """检查标签覆盖度。"""
     errors = []
+    cases, parse_errors = _read_jsonl(filepath)
+    errors.extend(parse_errors)
     tags = Counter()
-    with open(filepath) as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            case = json.loads(line)
-            for tag in case.get("tags", []):
-                tags[tag] += 1
+    for case in cases:
+        for tag in case.get("tags", []):
+            tags[tag] += 1
     required = REQUIRED_TAGS.get(dimension, [])
     for tag in required:
         if tag not in tags:
@@ -63,28 +84,17 @@ def check_coverage(filepath: str, dimension: str) -> list[str]:
 def check_scoring(filepath: str) -> list[str]:
     """检查可评分性。"""
     errors = []
-    with open(filepath) as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            case = json.loads(line)
-            criteria = case.get("evaluation", {}).get("criteria", [])
-            if not criteria:
-                errors.append(f"{case['id']}: 无评分标准")
+    cases, parse_errors = _read_jsonl(filepath)
+    errors.extend(parse_errors)
+    for case in cases:
+        criteria = case.get("evaluation", {}).get("criteria", [])
+        if not criteria:
+            errors.append(f"{case['id']}: 无评分标准")
     return errors
 
 
 def validate(skill: str, dimension: str) -> int:
-    dim_file = {
-        "功能正确性": "functionality.jsonl",
-        "鲁棒性": "robustness.jsonl",
-        "指令清晰度": "clarity.jsonl",
-        "隔离性": "isolation.jsonl",
-        "幂等性": "idempotency.jsonl",
-        "性能开销": "performance.jsonl",
-        "知识完整性": "knowledge-integrity.jsonl",
-    }[dimension]
+    dim_file = OUTPUT_FILES[dimension]
     filepath = os.path.join(EVALS_DIR, skill, dim_file)
     if not os.path.exists(filepath):
         print(f"文件不存在: {filepath}")
@@ -105,11 +115,12 @@ def validate(skill: str, dimension: str) -> int:
 if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "--all":
         total = 0
+        common_dims = ["功能正确性", "鲁棒性", "指令清晰度", "隔离性",
+                       "幂等性", "性能开销"]
         for skill in ["context-loader", "refine-knowledge"]:
-            dims = ["功能正确性", "鲁棒性", "指令清晰度", "隔离性",
-                    "幂等性", "性能开销"]
-            if skill == "refine-knowledge":
-                dims.append("知识完整性")
+            dims = common_dims + (
+                ["知识完整性"] if skill == "refine-knowledge" else []
+            )
             for dim in dims:
                 total += validate(skill, dim)
         sys.exit(1 if total > 0 else 0)

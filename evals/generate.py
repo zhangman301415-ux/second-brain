@@ -1,31 +1,20 @@
 #!/usr/bin/env python3
-"""测试用例生成器和验证器。
+"""测试用例验证器和索引生成器。
+
+生成逻辑将在后续批次中实现。当前版本提供：
+- 格式验证（validate_case, validate_file）
+- 索引生成（build_evals_index）
 
 Usage:
-    python evals/generate.py <skill> <dimension> <count> [--batch N]
     python evals/generate.py --validate
 """
 
 import json
 import sys
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
-SKILL_MAP = {
-    "context-loader": "CL",
-    "refine-knowledge": "RK",
-}
-
-DIMENSION_MAP = {
-    "功能正确性": "FUNC",
-    "鲁棒性": "ROBUST",
-    "指令清晰度": "CLARITY",
-    "隔离性": "ISOLATION",
-    "幂等性": "IDEMP",
-    "性能开销": "PERF",
-    "知识完整性": "KNOWLEDGE",
-}
-
+# 维度到输出文件名的映射，供后续生成逻辑使用
 OUTPUT_FILES = {
     "功能正确性": "functionality.jsonl",
     "鲁棒性": "robustness.jsonl",
@@ -65,9 +54,14 @@ def validate_case(case: dict) -> list[str]:
 
 def validate_file(filepath: str) -> tuple:
     """验证一个 jsonl 文件。返回统计和错误。"""
-    stats = {"total": 0, "valid": 0, "errors": 0, "ids": set()}
+    stats = {"total": 0, "valid": 0, "errors_count": 0}
     file_errors = []
-    with open(filepath) as f:
+    seen_ids = set()
+    try:
+        f = open(filepath)
+    except FileNotFoundError:
+        return stats, [f"文件不存在: {filepath}"]
+    with f:
         for line_num, line in enumerate(f, 1):
             line = line.strip()
             if not line:
@@ -77,27 +71,25 @@ def validate_file(filepath: str) -> tuple:
                 case = json.loads(line)
             except json.JSONDecodeError as e:
                 file_errors.append(f"行 {line_num}: JSON 解析错误: {e}")
-                stats["errors"] += 1
                 continue
             errors = validate_case(case)
             if errors:
                 for err in errors:
                     file_errors.append(f"行 {line_num}: {err}")
-                stats["errors"] += 1
-            else:
-                stats["valid"] += 1
+                continue
+            stats["valid"] += 1
+            # Only check duplicates for valid cases with an ID
             if "id" in case:
-                if case["id"] in stats["ids"]:
+                if case["id"] in seen_ids:
                     file_errors.append(f"行 {line_num}: 重复 ID: {case['id']}")
-                    stats["errors"] += 1
-                stats["ids"].add(case["id"])
+                seen_ids.add(case["id"])
     stats["errors_count"] = len(file_errors)
     return stats, file_errors
 
 
 def build_evals_index():
     """构建 evals.json 索引文件。"""
-    index = {"generated_at": datetime.now().isoformat(), "evals": []}
+    index = {"generated_at": datetime.now(timezone.utc).isoformat(), "evals": []}
     evals_dir = os.path.dirname(os.path.abspath(__file__))
     for skill_dir in ["context-loader", "refine-knowledge"]:
         skill_path = os.path.join(evals_dir, skill_dir)
