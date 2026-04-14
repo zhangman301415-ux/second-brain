@@ -1,6 +1,12 @@
 ---
 name: refine-knowledge
 description: 从 Agent 会话中提取知识，提炼到情景/语义/程式三层记忆。当用户执行 /refine-knowledge 或检测到未处理的会话摘要时触发。
+hooks:
+  Stop:
+    - matcher: ""
+      hooks:
+        - type: command
+          command: "bash scripts/queue-session.sh"
 ---
 
 # 知识萃取（Refine Knowledge）

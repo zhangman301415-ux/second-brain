@@ -1,0 +1,9 @@
+{
+  "metadata": { "pluginRoot": "." },
+  "plugins": [
+    {
+      "name": "second-brain",
+      "skills": ["skills/refine-knowledge", "skills/context-loader"]
+    }
+  ]
+}
