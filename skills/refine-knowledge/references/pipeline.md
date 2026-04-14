@@ -50,6 +50,36 @@ tags: [从内容中提取]
 
 4. 标记 `processed: true`（修改 frontmatter）
 
+## Step 2.5: 检测 Identity 信号（Agent 自主 + 提案制）
+
+对每个 `processed: false` 的会话：
+
+1. 读取 session 摘要中的 `用户自我描述` 字段
+2. 如果该字段为空，检查 `决策/犹豫` 中是否有角色/偏好变化表述
+3. 根据 `references/criteria.md` 的 L5 信号检测标准判断
+4. 如果有信号：
+   a. 读取已有 `00-Identity/pending-updates.md`（如不存在则创建）
+   b. 检查是否已有相同/相似 pending 条目（去重）
+   c. 生成新 pending 条目，追加到文件：
+
+```markdown
+## [YYYY-MM-DD] - [维度: 角色/能力/价值观/自我认知]
+**建议**: 在 `[对应 Identity 文件]` 中追加/修改：...
+**证据**: 
+- YYYY-MM-DD session: "用户原文引用"
+**状态**: pending
+```
+
+5. 提示用户：
+```
+我注意到了一个可能的 Identity 变化，已写入 `00-Identity/pending-updates.md`。
+你要现在确认、忽略，还是稍后处理？
+```
+
+6. 用户确认 → 将建议写入对应 Identity 文件，从 pending 中标记为 resolved
+   用户忽略 → 标记为 rejected
+   用户稍后 → 保持 pending
+
 ## Step 3: 检测可沉淀方法（用户确认 + 分流）
 
 1. 扫描新生成的 Episodic 文件，检测模式：
