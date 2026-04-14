@@ -291,15 +291,6 @@ version: "1.0"
 
 ---
 
-## 元信息
-
-- [[core-values|核心价值观]]
-- [[current-skills|当前技能矩阵]]
-- [[growth-trajectory|能力演进轨迹]]
-- [[work-style|工作偏好]]
-- [[communities|所属社群]]
-
-> 当身份发生显著变化时，更新此卡片并记录到 [[turning-points|转折点]] 中。
 EOF
 echo "  ✓ $VAULT/00-Identity/profile.md"
 else
