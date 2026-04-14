@@ -52,7 +52,7 @@ tags: [从内容中提取]
 
 ## Step 2.5: 检测 Identity 信号（Agent 自主 + 提案制）
 
-对每个 `processed: false` 的会话：
+对 Step 1 扫描到的每个待处理会话（不依赖 processed 标记，Step 2 和 Step 2.5 共享同一批会话）：
 
 1. 读取 session 摘要中的 `用户自我描述` 字段
 2. 如果该字段为空，检查 `决策/犹豫` 中是否有角色/偏好变化表述
@@ -76,8 +76,16 @@ tags: [从内容中提取]
 你要现在确认、忽略，还是稍后处理？
 ```
 
-6. 用户确认 → 将建议写入对应 Identity 文件，从 pending 中标记为 resolved
-   用户忽略 → 标记为 rejected
+6. 用户确认 → 将建议写入对应 Identity 文件，从 pending 中标记为 resolved：
+   ```markdown
+   **状态**: resolved（已写入 [对应文件名]）
+   **处理日期**: YYYY-MM-DD
+   ```
+   用户忽略 → 标记为 rejected：
+   ```markdown
+   **状态**: rejected（用户认为非持久变化）
+   **处理日期**: YYYY-MM-DD
+   ```
    用户稍后 → 保持 pending
 
 ## Step 3: 检测可沉淀方法（用户确认 + 分流）
