@@ -1,11 +1,17 @@
 ---
 name: context-loader
 description: Agent 启动时自动发现并加载相关上下文。当新会话开始时触发，从 vault 各层加载历史经验、知识和已验证方法。
+hooks:
+  SessionStart:
+    - matcher: ""
+      hooks:
+        - type: command
+          command: "bash scripts/inject-context.sh"
 ---
 
 # 上下文加载（Context Loader）
 
-Agent 启动时自动加载相关上下文，不依赖外部 hook。
+Agent 启动时通过 SessionStart hook 自动注入上次会话摘要，然后主动加载 vault 相关上下文。
 
 ## 触发时机
 
