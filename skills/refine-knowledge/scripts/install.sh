@@ -183,6 +183,30 @@ EOF
   echo "  ✓ 03-Episodic/index.md"
 fi
 
+if [ ! -f "$VAULT/01-Procedural/index.md" ]; then
+  cat > "$VAULT/01-Procedural/index.md" << EOF
+---
+type: procedural
+created: $TODAY
+---
+
+# Procedural Memory — 方法论索引
+
+> 记录经过实践验证的方法论、SOP、工作流。
+> 不是"我觉得应该这样做"，而是"我这样做确实有效"。
+
+## 方法论索引
+| 方法 | 适用场景 | 有效性 | 关联 Episodic | 日期 |
+|------|----------|--------|--------------|------|
+
+**有效性字段：**
+- \`✅ 已验证\` — 被引用后效果良好
+- \`⚠️ 待验证\` — 刚沉淀，未经过实践检验
+- \`❌ 有局限\` — 实践发现不适用于某些场景
+EOF
+  echo "  ✓ 01-Procedural/index.md"
+fi
+
 if [ ! -f "$VAULT/04-Working/active.md" ]; then
   cat > "$VAULT/04-Working/active.md" << EOF
 ---
