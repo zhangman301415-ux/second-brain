@@ -82,14 +82,14 @@ export function setupSkills(tmpDir: string): string {
   mkdirSync(refineScripts, { recursive: true });
   mkdirSync(loaderScripts, { recursive: true });
 
-  const refineSrc = join(SKILLS_ROOT, "skills/refine-knowledge/scripts/queue-session.sh");
-  const loaderSrc = join(SKILLS_ROOT, "skills/context-loader/scripts/inject-context.sh");
+  const refineSrc = join(SKILLS_ROOT, "skills/refine-knowledge/scripts/queue-session.ts");
+  const loaderSrc = join(SKILLS_ROOT, "skills/context-loader/scripts/inject-context.ts");
 
   if (existsSync(refineSrc)) {
-    cpSync(refineSrc, join(refineScripts, "queue-session.sh"));
+    cpSync(refineSrc, join(refineScripts, "queue-session.ts"));
   }
   if (existsSync(loaderSrc)) {
-    cpSync(loaderSrc, join(loaderScripts, "inject-context.sh"));
+    cpSync(loaderSrc, join(loaderScripts, "inject-context.ts"));
   }
   return skills;
 }

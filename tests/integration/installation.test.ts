@@ -73,8 +73,8 @@ describe("installation", () => {
     expect(existsSync(join(TEST_VAULT, "00-Identity/profile.md"))).toBe(true);
 
     // Verify hooks mounted
-    expect(existsSync(join(HOME, ".claude/hooks/queue-session.sh"))).toBe(true);
-    expect(existsSync(join(HOME, ".claude/hooks/inject-context.sh"))).toBe(true);
+    expect(existsSync(join(HOME, ".claude/hooks/queue-session.ts"))).toBe(true);
+    expect(existsSync(join(HOME, ".claude/hooks/inject-context.ts"))).toBe(true);
 
     // Verify settings.json hooks registered
     const settings = readSettings(HOME);

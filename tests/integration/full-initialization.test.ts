@@ -47,8 +47,8 @@ describe("full-initialization", () => {
     expect(initResult.status).toBe(0);
     const mountResult = runScript("mount-hooks.sh", [TEST_SKILLS], { env: { HOME } });
     expect(mountResult.status).toBe(0);
-    expect(existsSync(join(HOME, ".claude/hooks/queue-session.sh"))).toBe(true);
-    expect(existsSync(join(HOME, ".claude/hooks/inject-context.sh"))).toBe(true);
+    expect(existsSync(join(HOME, ".claude/hooks/queue-session.ts"))).toBe(true);
+    expect(existsSync(join(HOME, ".claude/hooks/inject-context.ts"))).toBe(true);
     const settings = readSettings(HOME);
     expect(settings.hooks).toHaveProperty("Stop");
     expect(settings.hooks).toHaveProperty("SessionStart");

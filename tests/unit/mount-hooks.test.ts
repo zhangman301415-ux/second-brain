@@ -39,18 +39,18 @@ describe("mount-hooks", () => {
   test("copies scripts to hooks directory", () => {
     const result = _runMount();
     expect(result.status).toBe(0);
-    expect(existsSync(join(HOME, ".claude/hooks/queue-session.sh"))).toBe(true);
-    expect(existsSync(join(HOME, ".claude/hooks/inject-context.sh"))).toBe(true);
+    expect(existsSync(join(HOME, ".claude/hooks/queue-session.ts"))).toBe(true);
+    expect(existsSync(join(HOME, ".claude/hooks/inject-context.ts"))).toBe(true);
   });
 
   test("copied scripts are executable", () => {
     _runMount();
-    expect(statSync(join(HOME, ".claude/hooks/queue-session.sh")).mode & 0o111).toBeTruthy();
-    expect(statSync(join(HOME, ".claude/hooks/inject-context.sh")).mode & 0o111).toBeTruthy();
+    expect(statSync(join(HOME, ".claude/hooks/queue-session.ts")).mode & 0o111).toBeTruthy();
+    expect(statSync(join(HOME, ".claude/hooks/inject-context.ts")).mode & 0o111).toBeTruthy();
   });
 
   test("exit 2 when source scripts missing and does not modify settings", () => {
-    rmSync(join(TEST_SKILLS, "refine-knowledge/scripts/queue-session.sh"));
+    rmSync(join(TEST_SKILLS, "refine-knowledge/scripts/queue-session.ts"));
     const mtimeBefore = statSync(join(HOME, ".claude/settings.json")).mtimeMs;
     const result = _runMount();
     const mtimeAfter = statSync(join(HOME, ".claude/settings.json")).mtimeMs;
@@ -66,9 +66,9 @@ describe("mount-hooks", () => {
     expect(stopHooks.length).toBeGreaterThanOrEqual(1);
     expect(startHooks.length).toBeGreaterThanOrEqual(1);
     const stopCmd = stopHooks[0].hooks[0].command;
-    expect(stopCmd).toContain("queue-session.sh");
+    expect(stopCmd).toContain("queue-session.ts");
     const startCmd = startHooks[0].hooks[0].command;
-    expect(startCmd).toContain("inject-context.sh");
+    expect(startCmd).toContain("inject-context.ts");
   });
 
   test("multiple runs do not duplicate hooks (idempotent)", () => {
