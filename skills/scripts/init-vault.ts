@@ -15,10 +15,16 @@ if (!VAULT.startsWith("/")) {
 }
 
 const SCRIPT_DIR = dirname(new URL(import.meta.url).pathname);
-// Resolve identity templates dir: handles both compiled (dist/) and source (skills/)
-const IDENTITY_TEMPLATES_DIR = existsSync(join(SCRIPT_DIR, "..", "..", "..", "skills", "refine-knowledge", "references", "identity"))
-  ? join(SCRIPT_DIR, "..", "..", "..", "skills", "refine-knowledge", "references", "identity")
-  : join(SCRIPT_DIR, "..", "refine-knowledge", "references", "identity");
+
+// Resolve template dir: handles both compiled (dist/) and source (skills/)
+function resolveTemplatesDir(): string {
+  if (existsSync(join(SCRIPT_DIR, "..", "..", "..", "skills", "refine-knowledge", "references", "vault-templates"))) {
+    return join(SCRIPT_DIR, "..", "..", "..", "skills", "refine-knowledge", "references", "vault-templates");
+  }
+  return join(SCRIPT_DIR, "..", "refine-knowledge", "references", "vault-templates");
+}
+
+const TEMPLATES_DIR = resolveTemplatesDir();
 const CONFIG = process.argv[3] ?? resolve(join(SCRIPT_DIR, "..", ".vault-config.json"));
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -41,115 +47,44 @@ try {
   process.exit(2);
 }
 
-// 2. Generate index files (skip if exists)
-if (!existsSync(join(VAULT, "03-Episodic/index.md"))) {
-  writeFileSync(join(VAULT, "03-Episodic/index.md"), `---
-type: episodic
-created: ${TODAY}
----
-
-# Episodic Memory — 情景索引
-
-> 发生过什么？从原始数据中提炼出的有意义的情景记忆。
-
-## 情景索引
-| 事件 | 关键词 | 教训/价值 | 日期 |
-|------|--------|-----------|------|
-`, "utf-8");
+/**
+ * Read a template file, replace {{TODAY}} placeholders, write to vault.
+ * Skips if target file already exists.
+ */
+function writeFromTemplate(vaultPath: string, templateFile: string): void {
+  const fullPath = join(VAULT, vaultPath);
+  if (existsSync(fullPath)) return;
+  const templatePath = join(TEMPLATES_DIR, templateFile);
+  if (!existsSync(templatePath)) return;
+  const content = readFileSync(templatePath, "utf-8").replace(/\{\{TODAY\}\}/g, TODAY);
+  writeFileSync(fullPath, content);
 }
 
-if (!existsSync(join(VAULT, "01-Procedural/index.md"))) {
-  writeFileSync(join(VAULT, "01-Procedural/index.md"), `---
-type: procedural
-created: ${TODAY}
----
+// 2. Generate index files
+writeFromTemplate("03-Episodic/index.md", "episodic-index-template.md");
+writeFromTemplate("01-Procedural/index.md", "procedural-index-template.md");
+writeFromTemplate("02-Semantic/index.md", "semantic-index-template.md");
+writeFromTemplate("04-Working/active.md", "active-template.md");
 
-# Procedural Memory — 方法论索引
-
-> 记录经过实践验证的方法论、SOP、工作流。
-> 不是"我觉得应该这样做"，而是"我这样做确实有效"。
-
-## 方法论索引
-| 方法 | 适用场景 | 有效性 | 关联 Episodic | 日期 |
-|------|----------|--------|--------------|------|
-
-**有效性字段：**
-- ✅ 已验证 — 被引用后效果良好
-- ⚠️ 待验证 — 刚沉淀，未经过实践检验
-- ❌ 有局限 — 实践发现不适用于某些场景
-`, "utf-8");
-}
-
-if (!existsSync(join(VAULT, "02-Semantic/index.md"))) {
-  writeFileSync(join(VAULT, "02-Semantic/index.md"), `---
-type: semantic
-created: auto
----
-
-# Semantic Knowledge — 知识索引
-
-> 我知道什么？结构化的领域知识和参考资料。
-
-## Areas（我需要负责的事）
-
-| 主题 | 说明 | 最近更新 |
-|------|------|----------|
-
-## Resources（我觉得有用的资料）
-
-| 主题 | 说明 | 最近更新 |
-|------|------|----------|
-
-## 维护规则
-
-- 新增知识时，在本文件中添加条目
-- 不确定 Areas vs Resources 时，优先 Resources
-`, "utf-8");
-}
-
-if (!existsSync(join(VAULT, "04-Working/active.md"))) {
-  writeFileSync(join(VAULT, "04-Working/active.md"), `---
-type: working
-created: ${TODAY}
----
-
-# Working — 当前活跃关注点
-
-## 活跃项目
--
-
-## 独立任务
--
-
-## 犹豫中的决策
--
-
-## 最近日志
--
-`, "utf-8");
-}
-
-// 3. Generate Identity templates (skip if exists)
-// Templates are stored in references/identity/*-format.md
-const identityDir = IDENTITY_TEMPLATES_DIR;
-
+// 3. Generate Identity templates
 const identityMappings: [string, string][] = [
-  ["00-Identity/profile.md", "profile-format.md"],
-  ["00-Identity/values/core-values.md", "core-values-format.md"],
-  ["00-Identity/capabilities/current-skills.md", "current-skills-format.md"],
-  ["00-Identity/capabilities/growth-trajectory.md", "growth-trajectory-format.md"],
-  ["00-Identity/preferences/work-style.md", "work-style-format.md"],
-  ["00-Identity/narrative/turning-points.md", "turning-points-format.md"],
-  ["00-Identity/relationships/communities.md", "communities-format.md"],
-  ["00-Identity/pending-updates.md", "pending-updates-format.md"],
+  ["00-Identity/profile.md", "profile-template.md"],
+  ["00-Identity/values/core-values.md", "core-values-template.md"],
+  ["00-Identity/capabilities/current-skills.md", "current-skills-template.md"],
+  ["00-Identity/capabilities/growth-trajectory.md", "growth-trajectory-template.md"],
+  ["00-Identity/preferences/work-style.md", "work-style-template.md"],
+  ["00-Identity/narrative/turning-points.md", "turning-points-template.md"],
+  ["00-Identity/relationships/communities.md", "communities-template.md"],
+  ["00-Identity/pending-updates.md", "pending-updates-template.md"],
 ];
 
-for (const [vaultPath, formatFile] of identityMappings) {
+for (const [vaultPath, templateFile] of identityMappings) {
   const fullPath = join(VAULT, vaultPath);
   if (!existsSync(fullPath)) {
-    const formatPath = join(identityDir, formatFile);
-    if (existsSync(formatPath)) {
-      writeFileSync(fullPath, readFileSync(formatPath, "utf-8"));
+    const templatePath = join(TEMPLATES_DIR, templateFile);
+    if (existsSync(templatePath)) {
+      const content = readFileSync(templatePath, "utf-8").replace(/\{\{TODAY\}\}/g, TODAY);
+      writeFileSync(fullPath, content);
     }
   }
 }
@@ -160,7 +95,6 @@ if (existsSync(CONFIG)) {
   try {
     config = JSON.parse(readFileSync(CONFIG, "utf-8"));
   } catch {
-    // Treat invalid/empty config as fresh
     config = {};
   }
 }
