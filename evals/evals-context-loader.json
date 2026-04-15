@@ -1,0 +1,49 @@
+{
+  "skill_name": "context-loader",
+  "evals": [
+    {
+      "id": 1,
+      "name": "minimal-vault-basic-load",
+      "prompt": "启动新会话，使用 context-loader 加载上下文",
+      "description": "最小 vault（active.md + 少量索引），测试基础加载能力",
+      "expected_output": "正确读取 active.md 和索引，按相关性加载条目，Token 用量在预算内",
+      "initial_vault": "vaults/context-loader/minimal-vault/",
+      "assertions": [
+        "读取了 04-Working/active.md",
+        "读取了所有存在的 index.md 文件",
+        "按 active.md 中的关键词匹配并加载了相关条目",
+        "未加载明显不相关的条目",
+        "总 Token 用量在 10K 以内（小 vault 应远低于此）"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "large-vault-filtering",
+      "prompt": "启动新会话，使用 context-loader 加载上下文",
+      "description": "大 vault（50+ 条目），测试索引过滤效果和相关性判断",
+      "expected_output": "从大量条目中正确筛选出与当前任务相关的少数条目，避免上下文溢出",
+      "initial_vault": "vaults/context-loader/large-vault/",
+      "assertions": [
+        "读取了 active.md 和所有索引",
+        "加载的相关条目数不超过 10 个（避免溢出）",
+        "加载的条目确实与 active.md 中的任务相关",
+        "跳过了不相关的条目（报告跳过数量）",
+        "总 Token 用量在 15K 以内"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "identity-signals-present",
+      "prompt": "启动新会话，使用 context-loader 加载上下文",
+      "description": "vault 中包含 Identity 信号（pending-updates、profile 变化），测试是否能加载身份相关上下文",
+      "expected_output": "加载 active.md 时识别到 Identity 相关任务，加载 profile.md 和 pending-updates.md",
+      "initial_vault": "vaults/context-loader/with-identity-signals/",
+      "assertions": [
+        "读取了 active.md",
+        "当任务与 Identity 相关时，读取了 profile.md",
+        "当存在 pending-updates.md 时，读取并报告了待确认提案",
+        "未在与 Identity 无关的任务中加载 Identity 文件"
+      ]
+    }
+  ]
+}
