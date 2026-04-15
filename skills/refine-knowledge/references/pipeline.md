@@ -60,7 +60,7 @@ tags: [从内容中提取]
 4. 如果有信号：
    a. 读取已有 `00-Identity/pending-updates.md`（如不存在则创建）
    b. 检查是否已有相同/相似 pending 条目（去重，30 天内）
-   c. 生成新 pending 条目，追加到文件（格式见 `references/pending-updates-format.md`）
+   c. 生成新 pending 条目，追加到文件（格式见模板 HTML 注释）
 
 5. 提示用户：
 ```
@@ -68,10 +68,8 @@ tags: [从内容中提取]
 你要现在确认、忽略，还是稍后处理？
 ```
 
-6. 用户确认 → 将建议写入对应 Identity 文件，从 pending 中标记为 resolved：
-   （状态格式见 `references/pending-updates-format.md`）
-   用户忽略 → 标记为 rejected：
-   （状态格式见 `references/pending-updates-format.md`）
+6. 用户确认 → 将建议写入对应 Identity 文件，从 pending 中标记为 resolved
+   用户忽略 → 标记为 rejected
    用户稍后 → 保持 pending
 
 ## Step 3: 检测可沉淀方法（用户确认 + 分流）
