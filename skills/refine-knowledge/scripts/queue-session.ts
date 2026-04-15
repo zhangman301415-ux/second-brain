@@ -5,7 +5,7 @@ import { dirname, join } from "path";
 
 const SCRIPT_DIR = dirname(new URL(import.meta.url).pathname);
 const PROMPT_TEMPLATE = readFileSync(
-  join(SCRIPT_DIR, "..", "references", "session-prompt.md"),
+  join(SCRIPT_DIR, "..", "references", "session-summary-template.md"),
   "utf-8"
 );
 
