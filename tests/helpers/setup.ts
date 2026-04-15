@@ -1,7 +1,7 @@
-import { execFileSync, spawnSync } from "child_process";
-import { existsSync, cpSync, readFileSync, writeFileSync, mkdirSync } from "fs";
+import { spawnSync } from "child_process";
+import { cpSync, readFileSync, writeFileSync, mkdirSync } from "fs";
 import { tmpdir } from "os";
-import { mkdtemp, realpath } from "fs/promises";
+import { mkdtemp, realpath, mkdtempSync } from "fs/promises";
 import { join } from "path";
 
 const SCRIPTS_DIR = join(__dirname, "../../skills/scripts");
@@ -24,11 +24,8 @@ export function createTempDirSync(): string {
 }
 
 function mkdtempSyncWithFallback(prefix: string): string {
-  const fs = require("fs");
-  if (fs.mkdtempSync) {
-    return fs.mkdtempSync(prefix);
-  }
-  throw new Error("mkdtempSync not available");
+  // Use the imported mkdtempSync from fs/promises
+  return mkdtempSync(prefix);
 }
 
 /**
