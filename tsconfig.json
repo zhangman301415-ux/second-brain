@@ -8,8 +8,9 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "."
   },
-  "include": ["tests/**/*.ts"],
+  "include": ["tests/**/*.ts", "skills/**/*.ts", "evals/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

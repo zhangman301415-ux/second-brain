@@ -4,11 +4,14 @@
   "description": "五层认知架构 Agent Skills — 知识萃取与上下文加载",
   "private": true,
   "scripts": {
-    "test": "vitest run tests/**/*.test.ts",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "npm run build && vitest run tests/**/*.test.ts",
     "test:watch": "vitest tests/**/*.test.ts"
   },
   "devDependencies": {
     "vitest": "^3",
-    "tsx": "^4"
+    "tsx": "^4",
+    "typescript": "^5"
   }
 }
