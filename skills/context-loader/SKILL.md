@@ -6,7 +6,7 @@ hooks:
     - matcher: ""
       hooks:
         - type: command
-          command: "bash scripts/inject-context.sh"
+          command: "npx tsx scripts/inject-context.ts"
 ---
 
 # 上下文加载（Context Loader）

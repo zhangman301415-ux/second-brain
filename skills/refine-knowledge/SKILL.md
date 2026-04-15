@@ -6,7 +6,7 @@ hooks:
     - matcher: ""
       hooks:
         - type: command
-          command: "bash scripts/queue-session.sh"
+          command: "npx tsx scripts/queue-session.ts"
 ---
 
 # 知识萃取（Refine Knowledge）

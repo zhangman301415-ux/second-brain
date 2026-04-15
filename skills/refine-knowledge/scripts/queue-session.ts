@@ -43,7 +43,7 @@ process.stdin.on("end", () => {
   hasSession.on("close", (code) => {
     if (code === 0) process.exit(0);
 
-    const summaryPrompt = `请回顾这次会话，生成以下格式的摘要：
+    const summaryPrompt = `请回顾这次会话，按照 refine-knowledge 技能中定义的 session 格式（references/session-format.md）生成摘要：
 ---
 date: ${date}
 type: agent-session

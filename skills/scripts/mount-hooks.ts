@@ -12,22 +12,22 @@ if (!SKILLS_ROOT) {
 const hooksDir = join(process.env.HOME!, ".claude", "hooks");
 mkdirSync(hooksDir, { recursive: true });
 
-const refineScript = join(SKILLS_ROOT, "refine-knowledge/scripts/queue-session.sh");
-const loaderScript = join(SKILLS_ROOT, "context-loader/scripts/inject-context.sh");
+const refineScript = join(SKILLS_ROOT, "refine-knowledge/scripts/queue-session.ts");
+const loaderScript = join(SKILLS_ROOT, "context-loader/scripts/inject-context.ts");
 
 let hooksOk = true;
 
 if (existsSync(refineScript)) {
-  copyFileSync(refineScript, join(hooksDir, "queue-session.sh"));
-  chmodSync(join(hooksDir, "queue-session.sh"), 0o755);
+  copyFileSync(refineScript, join(hooksDir, "queue-session.ts"));
+  chmodSync(join(hooksDir, "queue-session.ts"), 0o755);
 } else {
   process.stderr.write(`错误: 未找到 ${refineScript}\n`);
   hooksOk = false;
 }
 
 if (existsSync(loaderScript)) {
-  copyFileSync(loaderScript, join(hooksDir, "inject-context.sh"));
-  chmodSync(join(hooksDir, "inject-context.sh"), 0o755);
+  copyFileSync(loaderScript, join(hooksDir, "inject-context.ts"));
+  chmodSync(join(hooksDir, "inject-context.ts"), 0o755);
 } else {
   process.stderr.write(`错误: 未找到 ${loaderScript}\n`);
   hooksOk = false;
@@ -49,11 +49,11 @@ const hooks = (settings.hooks = (settings.hooks ?? {}) as Record<string, unknown
 
 const stopHook = {
   matcher: "",
-  hooks: [{ type: "command", command: "bash ~/.claude/hooks/queue-session.sh" }],
+  hooks: [{ type: "command", command: "npx tsx ~/.claude/hooks/queue-session.ts" }],
 };
 const sessionStartHook = {
   matcher: "",
-  hooks: [{ type: "command", command: "bash ~/.claude/hooks/inject-context.sh" }],
+  hooks: [{ type: "command", command: "npx tsx ~/.claude/hooks/inject-context.ts" }],
 };
 
 const existingStop = ((hooks["Stop"] as unknown[]) ?? []).filter(
