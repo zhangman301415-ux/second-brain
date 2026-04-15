@@ -39,7 +39,7 @@ fi
 
 tmux new-session -d -s "$SESSION_NAME" \
   "claude -p --resume '$SESSION_ID' --permission-mode auto \
-    '请回顾这次会话，生成以下格式的摘要：
+    '请回顾这次会话，按照 refine-knowledge 技能中定义的 session 格式（references/session-format.md）生成摘要，格式如下：
     ---
     date: $DATE
     type: agent-session
