@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "name": "minimal-vault-basic-load",
+  "prompt": "启动新会话，使用 context-loader 加载上下文",
+  "description": "最小 vault（active.md + 少量索引），测试基础加载能力",
+  "expected_output": "正确读取 active.md 和索引，按相关性加载条目，Token 用量在预算内",
+  "assertions": [
+    "读取了 04-Working/active.md",
+    "读取了所有存在的 index.md 文件",
+    "按 active.md 中的关键词匹配并加载了相关条目",
+    "未加载明显不相关的条目",
+    "总 Token 用量在 10K 以内（小 vault 应远低于此）"
+  ]
+}

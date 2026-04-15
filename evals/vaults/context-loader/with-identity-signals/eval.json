@@ -1,0 +1,13 @@
+{
+  "id": 3,
+  "name": "identity-signals-present",
+  "prompt": "启动新会话，使用 context-loader 加载上下文",
+  "description": "vault 中包含 Identity 信号（pending-updates、profile 变化），测试是否能加载身份相关上下文",
+  "expected_output": "加载 active.md 时识别到 Identity 相关任务，加载 profile.md 和 pending-updates.md",
+  "assertions": [
+    "读取了 active.md",
+    "当任务与 Identity 相关时，读取了 profile.md",
+    "当存在 pending-updates.md 时，读取并报告了待确认提案",
+    "未在与 Identity 无关的任务中加载 Identity 文件"
+  ]
+}

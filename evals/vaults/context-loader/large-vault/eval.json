@@ -1,0 +1,14 @@
+{
+  "id": 2,
+  "name": "large-vault-filtering",
+  "prompt": "启动新会话，使用 context-loader 加载上下文",
+  "description": "大 vault（50+ 条目），测试索引过滤效果和相关性判断",
+  "expected_output": "从大量条目中正确筛选出与当前任务相关的少数条目，避免上下文溢出",
+  "assertions": [
+    "读取了 active.md 和所有索引",
+    "加载的相关条目数不超过 10 个（避免溢出）",
+    "加载的条目确实与 active.md 中的任务相关",
+    "跳过了不相关的条目（报告跳过数量）",
+    "总 Token 用量在 15K 以内"
+  ]
+}
