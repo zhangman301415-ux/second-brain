@@ -13,20 +13,20 @@ created: auto
 
 | 技能 | 熟练度 | 证据 |
 |------|--------|------|
-| Java/Spring Boot | 精通 | 多年企业项目经验 |
-| RESTful API 设计 | 精通 | 主导多个 API 项目 |
-| 数据库设计 | 熟练 | MySQL、PostgreSQL 经验 |
+| Java/Spring Boot | 精通 | |
+| RESTful API 设计 | 精通 | |
+| 数据库设计 | 熟练 | |
 
 ## 基础设施
 
 | 技能 | 熟练度 | 证据 |
 |------|--------|------|
-| Docker | 熟练 | 日常使用 |
-| Kubernetes | 初级 | 了解基本概念 |
+| Docker | 熟练 | |
+| Kubernetes | 初级 | |
 
 ## 前端开发
 
 | 技能 | 熟练度 | 证据 |
 |------|--------|------|
-| TypeScript | 初级 | 基本类型注解 |
-| React | 初级 | 了解组件概念 |
+| TypeScript | 初级 | |
+| React | 初级 | |
