@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 evals/
-├── runner/                    # vault-snapshot CLI 工具（TypeScript，编译至 dist/）
+├── scripts/                   # vault-snapshot CLI 工具（TypeScript，编译至 dist/）
 │   └── vault-snapshot.ts      # Vault 快照：初始化、快照创建、diff 比较、目录复制
 ├── vaults/<skill_name>/       # 测试用例 vault 快照（源文件，不参与编译）
 │   └── <scenario>/
@@ -85,7 +85,7 @@ Agent 会按下方流程自动执行。
 将当前 skill 目录完整复制到 `evals/workspace/<skill_name>/iteration-N/skills_snapshot/`：
 
 ```bash
-node dist/evals/runner/vault-snapshot.js copy skills/<skill_name> evals/workspace/<skill_name>/iteration-N/skills_snapshot
+node dist/evals/scripts/vault-snapshot.js copy skills/<skill_name> evals/workspace/<skill_name>/iteration-N/skills_snapshot
 ```
 
 这样每一轮迭代都保存当时使用的 skill 内容（SKILL.md、脚本文件等），便于后续对比 skill 的变更对评估结果的影响。
@@ -99,13 +99,13 @@ node dist/evals/runner/vault-snapshot.js copy skills/<skill_name> evals/workspac
 运行以下命令从模板初始化工作 vault：
 
 ```bash
-node dist/evals/runner/vault-snapshot.js init evals/vaults/<skill_name>/<name> evals/workspace/<skill_name>/iteration-N/eval-<name>/vault
+node dist/evals/scripts/vault-snapshot.js init evals/vaults/<skill_name>/<name> evals/workspace/<skill_name>/iteration-N/eval-<name>/vault
 ```
 
 #### 3b. 创建 initial 快照
 
 ```bash
-node dist/evals/runner/vault-snapshot.js snapshot evals/workspace/<skill_name>/iteration-N/eval-<name>/vault evals/workspace/<skill_name>/iteration-N/eval-<name>/initial_vault
+node dist/evals/scripts/vault-snapshot.js snapshot evals/workspace/<skill_name>/iteration-N/eval-<name>/vault evals/workspace/<skill_name>/iteration-N/eval-<name>/initial_vault
 ```
 
 #### 3c. 启动 executor subagent 执行 skill
@@ -137,13 +137,13 @@ Subagent 的 prompt 模板：
 #### 3d. 创建 final 快照
 
 ```bash
-node dist/evals/runner/vault-snapshot.js snapshot evals/workspace/<skill_name>/iteration-N/eval-<name>/vault evals/workspace/<skill_name>/iteration-N/eval-<name>/final_vault
+node dist/evals/scripts/vault-snapshot.js snapshot evals/workspace/<skill_name>/iteration-N/eval-<name>/vault evals/workspace/<skill_name>/iteration-N/eval-<name>/final_vault
 ```
 
 #### 3e. 生成 diff
 
 ```bash
-node dist/evals/runner/vault-snapshot.js diff evals/workspace/<skill_name>/iteration-N/eval-<name>/initial_vault evals/workspace/<skill_name>/iteration-N/eval-<name>/final_vault
+node dist/evals/scripts/vault-snapshot.js diff evals/workspace/<skill_name>/iteration-N/eval-<name>/initial_vault evals/workspace/<skill_name>/iteration-N/eval-<name>/final_vault
 ```
 
 将 diff 输出写入 `evals/workspace/<skill_name>/iteration-N/eval-<name>/vault_diff.txt`
@@ -151,7 +151,7 @@ node dist/evals/runner/vault-snapshot.js diff evals/workspace/<skill_name>/itera
 同时运行以下命令获取 JSON 格式的 diff 用于评分：
 
 ```bash
-node dist/evals/runner/vault-snapshot.js diff evals/workspace/<skill_name>/iteration-N/eval-<name>/initial_vault evals/workspace/<skill_name>/iteration-N/eval-<name>/final_vault --format json
+node dist/evals/scripts/vault-snapshot.js diff evals/workspace/<skill_name>/iteration-N/eval-<name>/initial_vault evals/workspace/<skill_name>/iteration-N/eval-<name>/final_vault --format json
 ```
 
 #### 3f. 启动 grader subagent 评分
@@ -268,14 +268,14 @@ delta 字段仅在存在上一轮数据时出现。
 
 ```bash
 # 从模板目录初始化 vault
-node dist/evals/runner/vault-snapshot.js init <templateDir> <targetDir>
+node dist/evals/scripts/vault-snapshot.js init <templateDir> <targetDir>
 
 # 创建快照
-node dist/evals/runner/vault-snapshot.js snapshot <sourceDir> <targetDir>
+node dist/evals/scripts/vault-snapshot.js snapshot <sourceDir> <targetDir>
 
 # 比较两个快照（text 或 json 格式）
-node dist/evals/runner/vault-snapshot.js diff <beforeDir> <afterDir> [--format=text|json]
+node dist/evals/scripts/vault-snapshot.js diff <beforeDir> <afterDir> [--format=text|json]
 
 # 复制目录（用于 skill 快照）
-node dist/evals/runner/vault-snapshot.js copy <sourceDir> <targetDir>
+node dist/evals/scripts/vault-snapshot.js copy <sourceDir> <targetDir>
 ```

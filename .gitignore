@@ -4,3 +4,4 @@
 /.worktrees/
 /skills/.vault-config.json
 node_modules/
+evals/workspace/
