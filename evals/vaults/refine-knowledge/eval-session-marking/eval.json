@@ -1,0 +1,13 @@
+{
+  "id": 6,
+  "name": "session-marking",
+  "prompt": "/refine-knowledge",
+  "description": "验证管线完成后 session 文件的 processed 标记",
+  "expected_output": "agent-sessions.md 的 frontmatter 中 processed 标记为 true",
+  "assertions": [
+    "04-Working/2026-04-15/agent-sessions.md 文件存在",
+    "agent-sessions.md 的 frontmatter 中 processed 字段为 true",
+    "文件内容未被修改（仅 frontmatter 变更）",
+    "日期目录名（2026-04-15）与 session 日期一致"
+  ]
+}

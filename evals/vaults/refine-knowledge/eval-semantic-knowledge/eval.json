@@ -1,0 +1,17 @@
+{
+  "id": 4,
+  "name": "semantic-knowledge",
+  "prompt": "/refine-knowledge",
+  "description": "验证 Semantic 知识文件的生成质量和分类正确性",
+  "expected_output": "在 02-Semantic/ 下创建知识文件，正确分流到 Areas 或 Resources",
+  "assertions": [
+    "在 02-Semantic/Areas/ 或 02-Semantic/Resources/ 下创建了至少 1 个 .md 文件",
+    "父文件夹名为内容主题（如 EventSourcing/），不含活动关键词（学习、调研、实践）",
+    "文件 frontmatter 包含 type、date、tags 字段",
+    "文件正文包含 session 中至少 2 个技术术语（事件溯源、事件不变性、投影、重放、CQRS）",
+    "使用 [[文件名]] 格式 WikiLink 引用来源",
+    "新建文件路径或文件名出现在 02-Semantic/index.md 中",
+    "文件不包含 '方法'、'步骤'、'教训'、'SOP' 等 Procedural/Episodic 风格的小标题",
+    "文件正文中不含英文段落（允许技术术语和代码引用）"
+  ]
+}

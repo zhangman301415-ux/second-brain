@@ -1,0 +1,18 @@
+{
+  "id": 3,
+  "name": "procedural-method",
+  "prompt": "/refine-knowledge",
+  "description": "验证 Procedural 方法文件的生成质量",
+  "expected_output": "在 01-Procedural/ 下创建方法文件，含完整描述和待验证标记",
+  "assertions": [
+    "在 01-Procedural/ 下创建了至少 1 个 .md 文件",
+    "文件名不含活动关键词（学习、调研、尝试）",
+    "文件包含方法描述段落和适用场景描述",
+    "文件内容包含 '⚠️ 待验证' 标记",
+    "使用 [[文件名]] 格式 WikiLink 引用来源 Episodic",
+    "文件包含至少一段超过 30 字的非空描述文本（非仅标题或模板占位符）",
+    "新建文件名出现在 01-Procedural/index.md 表格中",
+    "索引表格中对应行的有效性列为 '⚠️ 待验证'",
+    "文件正文中不含英文段落（允许技术术语）"
+  ]
+}

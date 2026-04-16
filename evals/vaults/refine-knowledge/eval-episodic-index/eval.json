@@ -1,0 +1,15 @@
+{
+  "id": 5,
+  "name": "episodic-index",
+  "prompt": "/refine-knowledge",
+  "description": "验证 Episodic 索引的同步质量",
+  "expected_output": "03-Episodic/index.md 新增条目与创建的 Episodic 文件一一对应",
+  "assertions": [
+    "03-Episodic/index.md 新增了与新建 Episodic 文件数量一致的行",
+    "索引表格包含 事件、关键词、教训/价值、日期 四列",
+    "每个索引条目的事件标题与对应 Episodic 文件名一致",
+    "索引条目的日期与 Episodic frontmatter 中的 date 一致",
+    "关键词字段非空，包含具体可检索的标签",
+    "教训/价值字段非空，提炼了核心要点"
+  ]
+}
