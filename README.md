@@ -4,29 +4,36 @@
 
 ## 安装
 
-### npm 包（推荐）
+本项目包含两个独立组件，需要分别安装：
+
+| 组件 | 分发方式 | 作用 |
+|------|----------|------|
+| **CLI** | npm 包（`second-brain`） | Vault 初始化、Hook 注册、会话摘要排队 |
+| **Skills** | npx skills | context-loader 和 refine-knowledge 两个 Agent Skill |
+
+### 1. 安装 CLI
 
 ```bash
-# 全局安装
 npm install -g second-brain
+```
 
-# 或直接 npx 运行
+或通过 npx 直接运行：
+
+```bash
 npx --yes second-brain mount-hooks
 ```
 
-### GitHub 源码
-
-通过 `npx skills` 从 GitHub 仓库安装：
+### 2. 安装 Skills
 
 ```bash
 npx skills add zhangman301415-ux/second-brain
 ```
 
-安装后，Skills 会注册到 Claude Code，新会话中即可使用。
+Skills 安装后会自动注册到 Claude Code，新会话中即可使用。
 
-## 首次使用
+### 首次使用
 
-安装后首次使用，Skill 会自动完成初始化：
+安装后首次触发 Skill（如新会话开始或执行 `/refine-knowledge`）时会自动完成初始化：
 
 1. **Vault 初始化** — 创建五层认知目录结构，生成索引和 Identity 模板
 2. **Hook 自动注册** — 自动将 `Stop` 和 `SessionStart` hooks 注册到 `~/.claude/settings.json`
@@ -70,28 +77,27 @@ Skill 安装后即可使用，无需额外配置：
 
 ```
 .
-├── skills/                         # Claude Code Skills 核心
-│   ├── context-loader/             # 上下文加载 Skill
-│   │   ├── SKILL.md
-│   │   ├── scripts/inject-context.ts
-│   │   └── references/
-│   ├── refine-knowledge/           # 知识萃取 Skill
-│   │   ├── SKILL.md
-│   │   ├── scripts/queue-session.ts
-│   │   └── references/
-│   └── scripts/                    # 共享脚本
-│       ├── init-vault.ts           # Vault 初始化
-│       └── mount-hooks.ts          # Hook 注册
+├── commands/                       # CLI 命令逻辑（TypeScript）
+│   ├── init-vault.ts               # Vault 初始化
+│   ├── mount-hooks.ts              # Hook 注册
+│   ├── inject-context.ts           # SessionStart Hook 处理
+│   └── queue-session.ts            # Stop Hook 处理
+├── skills/                         # Claude Code Skills 核心（纯 Markdown + 模板）
+│   ├── context-loader/
+│   │   └── SKILL.md
+│   └── refine-knowledge/
+│       ├── SKILL.md
+│       └── references/             # 模板（唯一源，SKILL 引用 + CLI 构建时复制）
 ├── bin/                            # CLI 入口脚本（npm 分发）
 │   ├── cli.js                      # 主 CLI: second-brain
 │   ├── stop-hook.js                # second-brain-stop-hook
 │   └── session-start-hook.js       # second-brain-session-start-hook
 ├── scripts/
-│   └── copy-templates.mjs          # 构建时复制模板
+│   └── copy-templates.mjs          # 构建时复制模板到 dist/templates/
 ├── evals/                          # 评估系统（回归测试）
 ├── tests/                          # 单元测试 & 集成测试
 ├── docs/                           # 设计文档
-├── dist/                           # 编译输出（含模板）
+├── dist/                           # 编译输出（含命令 + 模板副本）
 └── .claude/                        # Claude Code 配置
 ```
 
