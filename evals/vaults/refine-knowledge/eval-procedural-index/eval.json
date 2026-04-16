@@ -1,0 +1,15 @@
+{
+  "id": 14,
+  "name": "procedural-index",
+  "prompt": "/refine-knowledge",
+  "description": "验证 Procedural 索引的同步质量",
+  "expected_output": "01-Procedural/index.md 新增条目与方法文件一一对应",
+  "assertions": [
+    "01-Procedural/index.md 新增了与新建方法文件数量一致的行",
+    "索引表格包含 方法、适用场景、有效性、关联Episodic、日期 五列",
+    "每个索引条目的方法名与对应 Procedural 文件名一致",
+    "有效性字段为 ⚠️ 待验证",
+    "关联Episodic 列使用 WikiLink 格式",
+    "日期正确"
+  ]
+}

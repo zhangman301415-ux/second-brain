@@ -1,0 +1,12 @@
+{
+  "id": 15,
+  "name": "active-md",
+  "prompt": "/refine-knowledge",
+  "description": "验证 active.md 的日志更新质量",
+  "expected_output": "active.md 的最近日志包含已处理的 session，含提炼标记",
+  "assertions": [
+    "04-Working/active.md 内容发生变更",
+    "active.md 新增内容中包含 '[→ 已提炼]' 标记",
+    "active.md 新增内容中包含 2026-04-15 日期"
+  ]
+}
