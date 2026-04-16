@@ -33,7 +33,7 @@ export function runScript(
   args: string[] = [],
   options: { env?: Record<string, string>; cwd?: string } = {}
 ): { status: number; stdout: string; stderr: string } {
-  const baseName = scriptName.replace(/\.sh$/, "");
+  const baseName = scriptName.replace(/\.(sh|ts)$/, "");
   const scriptPath = join(DIST_DIR, "skills/scripts", `${baseName}.js`);
   try {
     const result = spawnSync("node", [scriptPath, ...args], {

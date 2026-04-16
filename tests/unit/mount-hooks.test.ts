@@ -27,11 +27,11 @@ describe("mount-hooks", () => {
   });
 
   function _runMount() {
-    return runScript("mount-hooks.sh", [TEST_SKILLS], { env: { HOME } });
+    return runScript("mount-hooks.ts", [TEST_SKILLS], { env: { HOME } });
   }
 
   test("exit 1 with no args", () => {
-    const result = runScript("mount-hooks.sh");
+    const result = runScript("mount-hooks.ts");
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("请提供");
   });

@@ -64,7 +64,7 @@ Hooks 在 `SKILL.md` frontmatter 中声明，通过 `mount-hooks.ts` 挂载。
 ## Git Commit 规范
 
 - 使用**中文**编写 commit message
-- 格式：`类型: 描述`，例如 `feat: 添加 Vault 初始化脚本`、`fix: 修复 Hook 挂载路径错误`、`chore: 清理旧版 .sh 文件`、`test: 适配测试用例`、`refactor: 重构上下文加载逻辑`
+- 格式：`类型: 描述`，例如 `feat: 添加 Vault 初始化脚本`、`fix: 修复 Hook 挂载路径错误`、`test: 适配测试用例`、`refactor: 重构上下文加载逻辑`
 - commit message 中**不得出现模型信息**（如 Claude、Sonnet、Opus、Haiku、GPT 等模型名称或版本）
 - 不生成 `Co-Authored-By` 署名行
 

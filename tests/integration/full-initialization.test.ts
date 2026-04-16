@@ -30,7 +30,7 @@ describe("full-initialization", () => {
   });
 
   test("full initialization end-to-end", () => {
-    const initResult = runScript("init-vault.sh", [TEST_VAULT]);
+    const initResult = runScript("init-vault.ts", [TEST_VAULT]);
     expect(initResult.status).toBe(0);
     expect(existsSync(join(TEST_VAULT, "00-Identity/capabilities"))).toBe(true);
     expect(existsSync(join(TEST_VAULT, "06-Archive/ingest/queue"))).toBe(true);
@@ -43,9 +43,9 @@ describe("full-initialization", () => {
   });
 
   test("init then mount hooks", () => {
-    const initResult = runScript("init-vault.sh", [TEST_VAULT]);
+    const initResult = runScript("init-vault.ts", [TEST_VAULT]);
     expect(initResult.status).toBe(0);
-    const mountResult = runScript("mount-hooks.sh", [TEST_SKILLS], { env: { HOME } });
+    const mountResult = runScript("mount-hooks.ts", [TEST_SKILLS], { env: { HOME } });
     expect(mountResult.status).toBe(0);
     expect(existsSync(join(HOME, ".claude/hooks/queue-session.ts"))).toBe(true);
     expect(existsSync(join(HOME, ".claude/hooks/inject-context.ts"))).toBe(true);

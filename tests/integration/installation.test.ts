@@ -59,12 +59,12 @@ describe("installation", () => {
     expect(checkInitialized()).toBe("False");
 
     // Run init
-    const initResult = runScript("init-vault.sh", [TEST_VAULT, CONFIG_FILE]);
+    const initResult = runScript("init-vault.ts", [TEST_VAULT, CONFIG_FILE]);
     expect(initResult.status).toBe(0);
     expect(checkInitialized()).toBe("True");
 
     // Run mount
-    const mountResult = runScript("mount-hooks.sh", [TEST_SKILLS], { env: { HOME } });
+    const mountResult = runScript("mount-hooks.ts", [TEST_SKILLS], { env: { HOME } });
     expect(mountResult.status).toBe(0);
 
     // Verify vault structure
@@ -89,16 +89,16 @@ describe("installation", () => {
 
   test("re-run install does not overwrite existing config", () => {
     // First complete install
-    runScript("init-vault.sh", [TEST_VAULT, CONFIG_FILE]);
-    runScript("mount-hooks.sh", [TEST_SKILLS], { env: { HOME } });
+    runScript("init-vault.ts", [TEST_VAULT, CONFIG_FILE]);
+    runScript("mount-hooks.ts", [TEST_SKILLS], { env: { HOME } });
 
     const config1 = JSON.parse(readFileSync(CONFIG_FILE, "utf-8"));
     const vaultPathBefore = config1.vaultPath;
     const mountedBefore = config1.hooksMounted;
 
     // Re-run install
-    runScript("init-vault.sh", [TEST_VAULT, CONFIG_FILE]);
-    runScript("mount-hooks.sh", [TEST_SKILLS], { env: { HOME } });
+    runScript("init-vault.ts", [TEST_VAULT, CONFIG_FILE]);
+    runScript("mount-hooks.ts", [TEST_SKILLS], { env: { HOME } });
 
     const config2 = JSON.parse(readFileSync(CONFIG_FILE, "utf-8"));
     expect(config2.vaultPath).toBe(vaultPathBefore);

@@ -18,17 +18,17 @@ describe("init-vault", () => {
   function _runInit() {
     TEST_VAULT = `${TEST_TMP}/vault`;
     CONFIG_FILE = `${TEST_TMP}/config.json`;
-    return runScript("init-vault.sh", [TEST_VAULT, CONFIG_FILE]);
+    return runScript("init-vault.ts", [TEST_VAULT, CONFIG_FILE]);
   }
 
   test("exit 1 with no args", () => {
-    const result = runScript("init-vault.sh");
+    const result = runScript("init-vault.ts");
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("请提供 vault 路径");
   });
 
   test("exit 1 with relative path", () => {
-    const result = runScript("init-vault.sh", ["relative/path"]);
+    const result = runScript("init-vault.ts", ["relative/path"]);
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("必须是绝对路径");
   });
@@ -84,7 +84,7 @@ describe("init-vault", () => {
 
   test("template files contain correct frontmatter", () => {
     TEST_VAULT = `${TEST_TMP}/vault`;
-    runScript("init-vault.sh", [TEST_VAULT]);
+    runScript("init-vault.ts", [TEST_VAULT]);
     const profile = readFileSync(`${TEST_VAULT}/00-Identity/profile.md`, "utf-8");
     expect(profile).toContain("---");
     expect(profile).toContain("type: profile");
@@ -102,9 +102,9 @@ describe("init-vault", () => {
   test("second run does not overwrite existing files (idempotent)", () => {
     TEST_VAULT = `${TEST_TMP}/vault`;
     CONFIG_FILE = `${TEST_TMP}/config.json`;
-    runScript("init-vault.sh", [TEST_VAULT, CONFIG_FILE]);
+    runScript("init-vault.ts", [TEST_VAULT, CONFIG_FILE]);
     const contentBefore = readFileSync(`${TEST_VAULT}/00-Identity/profile.md`, "utf-8");
-    runScript("init-vault.sh", [TEST_VAULT, CONFIG_FILE]);
+    runScript("init-vault.ts", [TEST_VAULT, CONFIG_FILE]);
     const contentAfter = readFileSync(`${TEST_VAULT}/00-Identity/profile.md`, "utf-8");
     expect(contentBefore).toBe(contentAfter);
   });
@@ -121,14 +121,14 @@ describe("init-vault", () => {
     TEST_VAULT = `${TEST_TMP}/vault`;
     const customConfig = `${TEST_TMP}/custom/path/config.json`;
     mkdirSync(`${TEST_TMP}/custom/path`, { recursive: true });
-    const result = runScript("init-vault.sh", [TEST_VAULT, customConfig]);
+    const result = runScript("init-vault.ts", [TEST_VAULT, customConfig]);
     expect(result.status).toBe(0);
     expect(existsSync(customConfig)).toBe(true);
   });
 
   test("exit 2 when mkdir fails", () => {
     writeFileSync(`${TEST_TMP}/vault`, "blocking file");
-    const result = runScript("init-vault.sh", [`${TEST_TMP}/vault`]);
+    const result = runScript("init-vault.ts", [`${TEST_TMP}/vault`]);
     expect(result.status).toBe(2);
   });
 });

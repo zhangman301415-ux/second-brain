@@ -1,25 +1,80 @@
 # Second Brain
 
-基于 **Claude Code Skills 机制**实现的"第二大脑"知识管理系统，采用五层认知架构，构建能主动学习、沉淀知识并协助工作方法论演进的 AI 协作者。
+基于 **Claude Code Skills** 实现的"第二大脑"知识管理系统，采用五层认知架构，构建能主动学习、沉淀知识并协助工作方法论演进的 AI 协作者。
+
+## 安装
+
+通过 `npx skills` 从 GitHub 仓库安装：
+
+```bash
+npx skills add zhangman301415-ux/second-brain
+```
+
+安装后，Skills 会注册到 Claude Code，新会话中即可使用。
+
+## 首次使用
+
+安装后首次使用，Skill 会自动引导完成初始化：
+
+1. **Vault 初始化** — 创建五层认知目录结构，生成索引和 Identity 模板
+2. **Hook 挂载** — 将 `Stop` 和 `SessionStart` hooks 挂载到 `~/.claude/hooks/`
+
+你也可以手动完成初始化：
+
+```bash
+# 1. 创建 vault 目录结构
+npx tsx skills/scripts/init-vault.ts ~/Documents/obsidian-workspace/obsidian_workspace
+
+# 2. 挂载 Claude Code hooks
+npx tsx skills/scripts/mount-hooks.ts
+```
+
+默认 Vault 路径：`~/Documents/obsidian-workspace/obsidian_workspace`
+
+## 快速开始
+
+### 开发 & 测试
+
+```bash
+# 安装依赖
+npm install
+
+# 编译 TypeScript
+npm run build
+
+# 运行测试
+npm test
+```
+
+### 日常使用
+
+安装 Skill 后即可使用，无需额外配置：
+
+- **`/refine-knowledge`** — 手动触发知识萃取
+- 新会话自动触发上下文加载
+- 会话结束自动捕获摘要并排队知识萃取
 
 ## 架构
 
 ```
 .
-├── .claude-plugin/            # npx skills 技能发现配置
-│   └── marketplace.json
-├── skills/                    # Claude Code Skills 核心目录
-│   ├── context-loader/        # 上下文加载 Skill
-│   ├── refine-knowledge/      # 知识萃取 Skill
-│   └── scripts/               # 共享脚本
-│       ├── init-vault.sh      # Vault 初始化
-│       └── mount-hooks.sh     # Hook 挂载
-├── docs/                      # 设计文档
-│   └── superpowers/
-│       ├── specs/             # 设计规范
-│       └── plans/             # 实现计划
-└── .claude/
-    └── settings.local.json    # Claude Code 权限配置
+├── skills/                         # Claude Code Skills 核心
+│   ├── context-loader/             # 上下文加载 Skill
+│   │   ├── SKILL.md
+│   │   ├── scripts/inject-context.ts
+│   │   └── references/
+│   ├── refine-knowledge/           # 知识萃取 Skill
+│   │   ├── SKILL.md
+│   │   ├── scripts/queue-session.ts
+│   │   └── references/
+│   └── scripts/                    # 共享脚本
+│       ├── init-vault.ts           # Vault 初始化
+│       └── mount-hooks.ts          # Hook 挂载
+├── evals/                          # 评估系统（回归测试）
+├── tests/                          # 单元测试 & 集成测试
+├── docs/                           # 设计文档
+├── dist/                           # 编译输出
+└── .claude/                        # Claude Code 配置
 ```
 
 ## 五层认知模型
@@ -61,46 +116,38 @@
   3. 按任务关键词匹配，渐进式加载相关全文
   4. Token 预算控制在 ~10K-15K
 
-## 安装
-
-### 初始化
-
-Vault 初始化由 Agent 引导式完成，首次调用 skill 时自动触发。
-
-如需手动初始化：
-
-```bash
-# 1. 创建 vault 目录结构
-bash skills/scripts/init-vault.sh <vault-path>
-
-# 2. 挂载 Claude Code hooks
-bash skills/scripts/mount-hooks.sh <skills-root>
-```
-
-默认 vault 路径：`~/Documents/obsidian-workspace/obsidian_workspace`
-
 ## Hook 机制
 
-| Hook | 触发时机 | 功能 |
-|------|----------|------|
-| `Stop` | 会话结束 | 捕获会话摘要，后台生成并排队等待知识萃取 |
-| `SessionStart` | 会话开始 | 注入上次会话摘要和相关上下文 |
+| Hook | 触发时机 | 脚本 | 功能 |
+|------|----------|------|------|
+| `Stop` | 会话结束 | `queue-session.ts` | 捕获会话摘要，后台生成并排队等待知识萃取 |
+| `SessionStart` | 会话开始 | `inject-context.ts` | 注入上次会话摘要和相关上下文 |
 
-Hooks 通过 `SKILL.md` frontmatter 声明（npx-skills-integration），无需手动配置 `settings.json`。
+Hooks 通过 `SKILL.md` frontmatter 声明，由 `mount-hooks.ts` 挂载到 `~/.claude/hooks/`，无需手动配置 `settings.json`。
 
 ## 核心脚本
 
-| 脚本 | 功能 |
-|------|------|
-| `skills/scripts/init-vault.sh` | 创建目录结构、生成各层索引/Identity 模板 |
-| `skills/scripts/mount-hooks.sh` | 复制 hooks 到 `~/.claude/hooks/` |
-| `skills/refine-knowledge/scripts/queue-session.sh` | Stop hook，后台 tmux 会话生成摘要 |
-| `skills/context-loader/scripts/inject-context.sh` | SessionStart hook，注入上下文 |
+| 脚本（源码） | 编译后 | 功能 |
+|-------------|--------|------|
+| `skills/scripts/init-vault.ts` | `dist/scripts/init-vault.js` | 创建 Vault 目录结构，生成各层索引和 Identity 模板 |
+| `skills/scripts/mount-hooks.ts` | `dist/scripts/mount-hooks.js` | 复制 Hooks 到 `~/.claude/hooks/`，更新 settings.json |
+| `skills/refine-knowledge/scripts/queue-session.ts` | `dist/refine-knowledge/scripts/queue-session.js` | Stop Hook：备份会话记录，启动 tmux 后台生成摘要 |
+| `skills/context-loader/scripts/inject-context.ts` | `dist/context-loader/scripts/inject-context.js` | SessionStart Hook：从归档注入上下文 |
+
+## 评估系统
+
+`evals/` 目录包含对 Skills 的回归测试用例，确保知识萃取和上下文加载的准确性。详见 `evals/CLAUDE.md`。
 
 ## 设计特点
 
-- **职责分离**：Skill 文档（`SKILL.md`）包含方法论和规则，Vault 纯粹承载内容
-- **渐进式加载**：从索引到全文，Token 预算可控
-- **提案制更新**：Identity 层变化需用户确认，避免误修改
-- **去重机制**：30 天内相似信号、7 天内 rejected 信号不重复提议
+- **Skill 文档承载规则/方法论**，Vault 仅承载内容 — 不混用
+- **渐进式加载**：从索引到全文，Token 预算可控，避免上下文溢出
+- **提案制更新 Identity**：`00-Identity/` 的任何变更需用户明确确认
+- **去重机制**：30 天内相似信号不重复，7 天内被拒绝的提案不重复
 - **自动化钩子**：通过 Claude Code hooks 无感捕获会话摘要
+
+## 技术栈
+
+- **TypeScript** — 所有脚本使用 TypeScript 编写
+- **tsx** — 运行时执行
+- **Vitest** — 测试框架

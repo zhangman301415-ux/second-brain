@@ -63,7 +63,7 @@ describe("hook-lifecycle", () => {
     });
     const parsed = JSON.parse(payload);
     expect(parsed.transcript_path).toBe("");
-    // queue-session.sh: [ -z "$TRANSCRIPT" ] && exit 0
+    // queue-session.ts: empty transcript → silent exit
     expect(parsed.transcript_path).toHaveLength(0);
     expect(parsed.session_id).toBe("test");
   });
