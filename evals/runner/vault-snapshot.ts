@@ -141,3 +141,64 @@ function collectFiles(dir: string): Record<string, string> {
   walk(dir);
   return result;
 }
+
+// -- CLI entry point --
+
+function printUsage(): void {
+  console.error("Usage:");
+  console.error("  vault-snapshot init <templateDir> <targetDir>");
+  console.error("  vault-snapshot snapshot <sourceDir> <targetDir>");
+  console.error("  vault-snapshot diff <beforeDir> <afterDir> [--format=text|json]");
+  process.exit(1);
+}
+
+function main(): void {
+  try {
+    const args = process.argv.slice(2);
+    if (args.length < 1) printUsage();
+
+    const command = args[0];
+
+    switch (command) {
+      case "init":
+        if (args.length < 3) printUsage();
+        if (!existsSync(args[1])) {
+          console.error(`Error: template directory does not exist: ${args[1]}`);
+          process.exit(1);
+        }
+        initVaultFromTemplate(args[1], args[2]);
+        console.log(`Vault initialized from ${args[1]} to ${args[2]}`);
+        break;
+
+      case "snapshot":
+        if (args.length < 3) printUsage();
+        if (!existsSync(args[1])) {
+          console.error(`Error: source directory does not exist: ${args[1]}`);
+          process.exit(1);
+        }
+        createSnapshot(args[1], args[2]);
+        console.log(`Snapshot created: ${args[2]}`);
+        break;
+
+      case "diff":
+        if (args.length < 3) printUsage();
+        const formatFlag = args.indexOf("--format");
+        const format = formatFlag >= 0 && args[formatFlag + 1] === "json" ? "json" : "text";
+        const diff = diffVault(args[1], args[2]);
+        if (format === "json") {
+          console.log(JSON.stringify(diff, null, 2));
+        } else {
+          console.log(formatVaultDiff(diff));
+        }
+        break;
+
+      default:
+        printUsage();
+    }
+  } catch (error) {
+    console.error(`Error: ${(error as Error).message}`);
+    process.exit(1);
+  }
+}
+
+main();
