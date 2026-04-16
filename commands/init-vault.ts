@@ -14,18 +14,9 @@ if (!VAULT.startsWith("/")) {
   process.exit(1);
 }
 
-const SCRIPT_DIR = dirname(new URL(import.meta.url).pathname);
-
-// Resolve template dir: handles both compiled (dist/) and source (skills/)
-function resolveTemplatesDir(): string {
-  if (existsSync(join(SCRIPT_DIR, "..", "..", "..", "skills", "refine-knowledge", "references", "vault-templates"))) {
-    return join(SCRIPT_DIR, "..", "..", "..", "skills", "refine-knowledge", "references", "vault-templates");
-  }
-  return join(SCRIPT_DIR, "..", "refine-knowledge", "references", "vault-templates");
-}
-
-const TEMPLATES_DIR = resolveTemplatesDir();
-const CONFIG = process.argv[3] ?? resolve(join(SCRIPT_DIR, "..", ".vault-config.json"));
+const COMMANDS_DIR = dirname(new URL(import.meta.url).pathname);
+const TEMPLATES_DIR = join(COMMANDS_DIR, "..", "templates", "vault-templates");
+const CONFIG = process.argv[3] ?? resolve(join(COMMANDS_DIR, "..", ".vault-config.json"));
 const TODAY = new Date().toISOString().slice(0, 10);
 
 // 1. Create directory structure
