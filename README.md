@@ -14,20 +14,12 @@ npx skills add zhangman301415-ux/second-brain
 
 ## 首次使用
 
-安装后首次使用，Skill 会自动引导完成初始化：
+安装后首次使用，Skill 会自动完成初始化：
 
 1. **Vault 初始化** — 创建五层认知目录结构，生成索引和 Identity 模板
-2. **Hook 挂载** — 将 `Stop` 和 `SessionStart` hooks 挂载到 `~/.claude/hooks/`
+2. **Hook 自动注册** — 自动将 `Stop` 和 `SessionStart` hooks 注册到 `~/.claude/settings.json`
 
-你也可以手动完成初始化：
-
-```bash
-# 1. 创建 vault 目录结构
-npx tsx skills/scripts/init-vault.ts ~/Documents/obsidian-workspace/obsidian_workspace
-
-# 2. 挂载 Claude Code hooks
-npx tsx skills/scripts/mount-hooks.ts
-```
+首次触发时仅会询问 vault 路径，Hook 注册无需用户确认（`npx skills add` 不会自动注册 hooks，所以 Skill 会在首次使用时自动补全）。
 
 默认 Vault 路径：`~/Documents/obsidian-workspace/obsidian_workspace`
 
