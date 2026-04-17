@@ -42,6 +42,30 @@ Skills 安装后会自动注册到 Claude Code，新会话中即可使用。
 
 默认 Vault 路径：`~/Documents/obsidian-workspace/obsidian_workspace`
 
+## 卸载
+
+如需完全移除 Second Brain，需分别清理 CLI、Skills 和已注册的 Hooks：
+
+### 1. 卸载 CLI
+
+```bash
+npm uninstall -g second-brain-cli
+```
+
+### 2. 移除 Skills
+
+在 Claude Code 中执行：
+
+```
+/skills remove zhangman301415-ux/second-brain
+```
+
+或通过 Claude Code 设置页面手动移除。
+
+### 3. 清理 Hooks
+
+编辑 `~/.claude/settings.json`，删除 `second-brain-cli-stop-hook` 和 `second-brain-cli-session-start-hook` 相关的 hook 配置条目。
+
 ## 快速开始
 
 ### 开发 & 测试
