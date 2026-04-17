@@ -8,19 +8,19 @@
 
 | 组件 | 分发方式 | 作用 |
 |------|----------|------|
-| **CLI** | npm 包（`second-brain`） | Vault 初始化、Hook 注册、会话摘要排队 |
+| **CLI** | npm 包（`second-brain-cli`） | Vault 初始化、Hook 注册、会话摘要排队 |
 | **Skills** | npx skills | context-loader 和 refine-knowledge 两个 Agent Skill |
 
 ### 1. 安装 CLI
 
 ```bash
-npm install -g second-brain
+npm install -g second-brain-cli
 ```
 
 或通过 npx 直接运行：
 
 ```bash
-npx --yes second-brain mount-hooks
+npx --yes second-brain-cli mount-hooks
 ```
 
 ### 2. 安装 Skills
@@ -61,10 +61,10 @@ npm test
 
 ```bash
 # 挂载 Hooks
-npx --yes second-brain mount-hooks
+npx --yes second-brain-cli mount-hooks
 
 # 初始化 Vault
-npx --yes second-brain init-vault <vault-path>
+npx --yes second-brain-cli init-vault <vault-path>
 ```
 
 Skill 安装后即可使用，无需额外配置：
@@ -89,9 +89,9 @@ Skill 安装后即可使用，无需额外配置：
 │       ├── SKILL.md
 │       └── references/             # 模板（唯一源，SKILL 引用 + CLI 构建时复制）
 ├── bin/                            # CLI 入口脚本（npm 分发）
-│   ├── cli.js                      # 主 CLI: second-brain
-│   ├── stop-hook.js                # second-brain-stop-hook
-│   └── session-start-hook.js       # second-brain-session-start-hook
+│   ├── cli.js                      # 主 CLI: second-brain-cli
+│   ├── stop-hook.js                # second-brain-cli-stop-hook
+│   └── session-start-hook.js       # second-brain-cli-session-start-hook
 ├── scripts/
 │   └── copy-templates.mjs          # 构建时复制模板到 dist/templates/
 ├── evals/                          # 评估系统（回归测试）
@@ -144,19 +144,19 @@ Skill 安装后即可使用，无需额外配置：
 
 | 命令 | 功能 |
 |------|------|
-| `npx --yes second-brain init-vault <vault-path>` | 创建 Vault 目录结构，生成各层索引和 Identity 模板 |
-| `npx --yes second-brain mount-hooks` | 注册 Stop/SessionStart Hook 到 settings.json |
-| `npx --yes second-brain-stop-hook` | Stop Hook 入口（内部调用 queue-session.js） |
-| `npx --yes second-brain-session-start-hook` | SessionStart Hook 入口（内部调用 inject-context.js） |
+| `npx --yes second-brain-cli init-vault <vault-path>` | 创建 Vault 目录结构，生成各层索引和 Identity 模板 |
+| `npx --yes second-brain-cli mount-hooks` | 注册 Stop/SessionStart Hook 到 settings.json |
+| `npx --yes second-brain-cli-stop-hook` | Stop Hook 入口（内部调用 queue-session.js） |
+| `npx --yes second-brain-cli-session-start-hook` | SessionStart Hook 入口（内部调用 inject-context.js） |
 
 ## Hook 机制
 
 | Hook | 触发时机 | 入口命令 | 功能 |
 |------|----------|----------|------|
-| `Stop` | 会话结束 | `second-brain-stop-hook` | 捕获会话摘要，后台生成并排队等待知识萃取 |
-| `SessionStart` | 会话开始 | `second-brain-session-start-hook` | 注入上次会话摘要和相关上下文 |
+| `Stop` | 会话结束 | `second-brain-cli-stop-hook` | 捕获会话摘要，后台生成并排队等待知识萃取 |
+| `SessionStart` | 会话开始 | `second-brain-cli-session-start-hook` | 注入上次会话摘要和相关上下文 |
 
-Hooks 通过 `SKILL.md` frontmatter 声明，由 `second-brain mount-hooks` 注册到 `~/.claude/settings.json`。
+Hooks 通过 `SKILL.md` frontmatter 声明，由 `second-brain-cli mount-hooks` 注册到 `~/.claude/settings.json`。
 
 ## 评估系统
 
