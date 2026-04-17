@@ -4,13 +4,13 @@
 
 ```
 1. 读取 04-Working/ 下所有 YYYY-MM-DD/ 目录
-2. 检查每个目录中 agent-sessions.md 是否存在
+2. 检查每个目录中 `refine-*.md` 文件
 3. 读取 frontmatter 中的 processed 标记
 4. 输出待处理列表给用户确认
 
 待处理会话：
-- 2026-04-14: 会话 abc-123 (processed: false)
-- 2026-04-15: 会话 def-456 (processed: false)
+- 2026-04-14: refine-abc123de.md (processed: false)
+- 2026-04-15: refine-def456gh.md (processed: false)
 
 是否继续处理以上会话？
 ```
@@ -19,9 +19,9 @@
 
 ## Step 2: 提炼 Episodic（Agent 自主）
 
-对每个 `processed: false` 的会话：
+对每个 `processed: false` 的会话文件：
 
-1. 读取完整的 `agent-sessions.md` 内容
+1. 读取完整的 `refine-*.md` 内容
 2. 根据 `references/criteria.md` 判断是否值得提炼
 3. 如果值得：
    - 从任务内容中提取标题

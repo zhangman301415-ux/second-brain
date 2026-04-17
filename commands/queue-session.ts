@@ -68,7 +68,8 @@ process.stdin.on("end", () => {
       .replace("{{DATE}}", date)
       .replace("{{SESSION_ID}}", sessionId);
 
-    const cmd = `claude -p --resume '${sessionId}' --permission-mode auto '${summaryPrompt}' > '${join(workingDateDir, "agent-sessions.md")}' 2>/dev/null; tmux kill-session -t '${sessionName}'`;
+    const sessionFile = join(workingDateDir, `refine-${sessionId.slice(0, 8)}.md`);
+    const cmd = `claude -p --resume '${sessionId}' --permission-mode auto '${summaryPrompt}' > '${sessionFile}' 2>/dev/null; tmux kill-session -t '${sessionName}'`;
 
     const tmuxProc = spawn("tmux", ["new-session", "-d", "-s", sessionName, cmd]);
     tmuxProc.on("error", () => process.exit(0));
