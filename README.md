@@ -20,7 +20,7 @@ npm install -g second-brain-cli
 或通过 npx 直接运行：
 
 ```bash
-npx --yes second-brain-cli mount-hooks
+second-brain-cli mount-hooks
 ```
 
 ### 2. 安装 Skills
@@ -85,10 +85,10 @@ npm test
 
 ```bash
 # 挂载 Hooks
-npx --yes second-brain-cli mount-hooks
+second-brain-cli mount-hooks
 
 # 初始化 Vault
-npx --yes second-brain-cli init-vault <vault-path>
+second-brain-cli init-vault <vault-path>
 ```
 
 Skill 安装后即可使用，无需额外配置：
@@ -166,10 +166,10 @@ Skill 安装后即可使用，无需额外配置：
 
 | 命令 | 功能 |
 |------|------|
-| `npx --yes second-brain-cli init-vault <vault-path>` | 创建 Vault 目录结构，生成各层索引和 Identity 模板 |
-| `npx --yes second-brain-cli mount-hooks` | 注册 Stop/SessionStart Hook 到 settings.json |
-| `npx --yes second-brain-cli queue-session` | Stop Hook 入口：接收 stdin payload 并排队 |
-| `npx --yes second-brain-cli inject-context` | SessionStart Hook 入口：读取并输出 vault 上下文 |
+| `second-brain-cli init-vault <vault-path>` | 创建 Vault 目录结构，生成各层索引和 Identity 模板 |
+| `second-brain-cli mount-hooks` | 注册 Stop/SessionStart Hook 到 settings.json |
+| `second-brain-cli queue-session` | Stop Hook 入口：接收 stdin payload 并排队 |
+| `second-brain-cli inject-context` | SessionStart Hook 入口：读取并输出 vault 上下文 |
 
 ## Hook 机制
 
