@@ -16,13 +16,26 @@ const BIN_DIR = dirname(fileURLToPath(import.meta.url));
 const DIST_COMMANDS = join(BIN_DIR, "..", "dist", "commands");
 
 const command = process.argv[2];
-if (!command) {
+if (!command || command === "--help" || command === "-h") {
   console.log("Usage: second-brain <command> [args]");
   console.log("Commands:");
   console.log("  init-vault <vault-path>  Initialize vault directory structure");
   console.log("  mount-hooks              Mount Stop/SessionStart hooks to ~/.claude/");
   console.log("  inject-context           SessionStart hook: inject vault context");
   console.log("  queue-session            Stop hook: queue session for refinement");
+  process.exit(0);
+}
+
+const helpMap = {
+  "init-vault": "Usage: second-brain init-vault <vault-path>\n  Initialize vault directory structure with index files and Identity templates.",
+  "mount-hooks": "Usage: second-brain mount-hooks\n  Mount Stop/SessionStart hooks to ~/.claude/settings.json.",
+  "inject-context": "Usage: second-brain inject-context\n  Read and output vault context from 06-Archive/ingest/context/latest.md.",
+  "queue-session": "Usage: second-brain queue-session\n  Receive stdin payload (transcript_path, session_id) and queue session for refinement.",
+};
+
+// Check for per-command help
+if (process.argv[3] === "--help" || process.argv[3] === "-h") {
+  console.log(helpMap[command] || `No help available for: ${command}`);
   process.exit(0);
 }
 
